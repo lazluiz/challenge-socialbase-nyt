@@ -5,7 +5,12 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.lazluiz.challengesocialbasenyt.model.NYTArticle;
+import io.realm.Realm;
 
 /**
  * Created by luiz on 06/07/16.
@@ -34,7 +39,7 @@ public class FetchAPIData {
         mNetworkQueue = NetworkQueue.getInstance();
     }
 
-    public void getData() {
+    public void fetchData() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         long lastInsert = sp.getLong(SP_FETCH_TIME, 0);
         long diff = System.currentTimeMillis() - lastInsert;
@@ -42,17 +47,43 @@ public class FetchAPIData {
         // Let's not update every time we launch our app
         if (diff > TIME_OFFSET_IN_MS) {
             mNetworkQueue.doGet(URL_DATA, LOG_TAG, new NetworkQueue.NetworkRequestCallback<JSONObject>() {
-
                 @Override
                 public void onRequestResponse(JSONObject response) {
-                    // Test our data :)
+                    persistData(response);
                 }
-
                 @Override
                 public void onRequestError(Exception error) {
                     Log.e(LOG_TAG, error.getMessage());
                 }
             });
+        }
+    }
+
+    private void persistData(JSONObject data) {
+        // API Serialize
+        final String FIELD_ABSTRACT = "abstract";
+        final String FIELD_ABSTRACT_SERIALIZED = "abstract_str";
+        final String FIELD_METADATA = "media-metadata";
+        final String FIELD_METADATA_SERIALIZED = "media_metadata";
+
+        String dataStr = data.toString();
+        dataStr = dataStr.replace("\"" + FIELD_ABSTRACT + "\":", "\"" + FIELD_ABSTRACT_SERIALIZED + "\":");
+        dataStr = dataStr.replace("\"" + FIELD_METADATA + "\":", "\"" + FIELD_METADATA_SERIALIZED + "\":");
+
+        try {
+            final String NYT_ARTICLE = "results";
+            final JSONObject serializedJSON = new JSONObject(dataStr);
+            final JSONArray serializedArticles = serializedJSON.getJSONArray(NYT_ARTICLE);
+
+            Realm realm = Realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.createOrUpdateAllFromJson(NYTArticle.class, serializedArticles);
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

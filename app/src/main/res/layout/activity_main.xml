@@ -7,10 +7,10 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="io.lazluiz.challengesocialbasenyt.MainActivity">
+    tools:context=".screen.MainActivity">
 
     <TextView
+        android:id="@+id/tvTest"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello darkness, my old friend." />
+        android:layout_height="wrap_content" />
 </RelativeLayout>

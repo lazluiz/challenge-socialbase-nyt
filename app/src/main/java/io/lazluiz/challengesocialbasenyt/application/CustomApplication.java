@@ -3,6 +3,8 @@ package io.lazluiz.challengesocialbasenyt.application;
 import android.app.Application;
 
 import io.lazluiz.challengesocialbasenyt.data.NetworkQueue;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by luiz on 06/07/16.
@@ -16,5 +18,13 @@ public class CustomApplication extends Application {
 
         // Volley
         NetworkQueue.getInstance().init(this);
+
+        // Realm
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
+                .name("realm-nyt.realm")
+                .deleteRealmIfMigrationNeeded()
+                .build();
+
+        Realm.setDefaultConfiguration(realmConfiguration);
     }
 }
