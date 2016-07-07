@@ -11,6 +11,7 @@ import io.realm.RealmConfiguration;
  * E-mail: lf.lazzarin@gmail.com
  * GitHub: github.com/luizfelippe
  */
+
 public class CustomApplication extends Application {
     @Override
     public void onCreate() {

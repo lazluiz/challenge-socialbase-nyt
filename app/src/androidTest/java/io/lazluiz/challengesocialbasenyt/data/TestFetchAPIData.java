@@ -26,8 +26,14 @@ import io.realm.RealmResults;
 public class TestFetchAPIData extends InstrumentationTestCase {
 
     private static final String LOG_TAG = TestFetchAPIData.class.getSimpleName();
-    private static final String URL_API = "http://api.nytimes.com/svc/mostpopular/v2/mostviewed/arts/30.json?offset=40";
+    private static final String URL_API = "http://api.nytimes.com/svc/mostpopular/v2/mostviewed/%s/30.json?offset=40";
 
+    private static final String[] SECTIONS = {
+            "arts",
+            "science",
+            "sports",
+            "technology"
+    };
 
     public void testFetchData() throws Throwable {
         // Criaremos um sinal para avisar quando o teste for finalizado
@@ -39,30 +45,33 @@ public class TestFetchAPIData extends InstrumentationTestCase {
         runTestOnUiThread(new Runnable() {
             @Override
             public void run() {
-                networkQueue.doGet(URL_API, LOG_TAG, new NetworkQueue.NetworkRequestCallback<JSONObject>() {
-                    @Override
-                    public void onRequestResponse(JSONObject response) {
-                        assertNotNull("The API should give us at least a bracket", response);
-                        try {
-                            Log.i(LOG_TAG, "JSON coming!!!\n" + response.toString(2));
-                            persistRealmData(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                for (String section : SECTIONS) {
+                    String url = String.format(URL_API, section);
+                    networkQueue.doGet(url, LOG_TAG, new NetworkQueue.NetworkRequestCallback<JSONObject>() {
+                        @Override
+                        public void onRequestResponse(JSONObject response) {
+                            assertNotNull("The API should give us at least a bracket", response);
+                            try {
+                                Log.i(LOG_TAG, "JSON coming!!!\n" + response.toString(2));
+                                persistRealmData(response);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            signal.countDown();
                         }
-                        signal.countDown();
-                    }
 
-                    @Override
-                    public void onRequestError(Exception error) {
-                        Log.e(LOG_TAG, "Error: " + error.getMessage());
-                        signal.countDown();
-                    }
-                });
+                        @Override
+                        public void onRequestError(Exception error) {
+                            Log.e(LOG_TAG, "Error: " + error.getMessage());
+                            signal.countDown();
+                        }
+                    });
+                }
             }
         });
 
         // Timeout
-        signal.await(15, TimeUnit.SECONDS);
+        signal.await(20, TimeUnit.SECONDS);
     }
 
     private void persistRealmData(JSONObject data) {
@@ -71,13 +80,17 @@ public class TestFetchAPIData extends InstrumentationTestCase {
 
             // That's some fine serialization right here
             String dataStr = data.toString();
-            dataStr = dataStr.replace("\"abstract\":","\"abstract_str\":");
-            dataStr = dataStr.replace("\"media-metadata\":","\"media_metadata\":");
+            dataStr = dataStr.replace("\"abstract\":", "\"abstract_str\":");
+            dataStr = dataStr.replace("\"media-metadata\":", "\"media_metadata\":");
+
+            // We need to deal with empty arrays.. ugh
+            dataStr = dataStr.replace("\"media\":\"\"","\"media\":[]");
+            dataStr = dataStr.replace("\"media-metadata\":\"\"","\"media-metadata\":[]");
 
             final JSONObject serializedJSON = new JSONObject(dataStr);
             final JSONArray serializedArticles = serializedJSON.getJSONArray(NYT_ARTICLE);
 
-            Realm realm =Realm.getDefaultInstance();
+            Realm realm = Realm.getDefaultInstance();
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
@@ -104,7 +117,7 @@ public class TestFetchAPIData extends InstrumentationTestCase {
         RealmResults<NYTArticle> nytArticles = realm.where(NYTArticle.class).findAll();
         assertTrue("Now this list should contain something!", nytArticles.size() > 0);
 
-        for(NYTArticle article : nytArticles){
+        for (NYTArticle article : nytArticles) {
             assertNotNull(article.getAdx_keywords());
             assertNotNull(article.getByline());
             assertNotNull(article.getId());
@@ -115,15 +128,13 @@ public class TestFetchAPIData extends InstrumentationTestCase {
             assertNotNull(article.getViews());
             assertNotNull(article.getAbstract_str());
             assertNotNull(article.getMedia());
-            assertTrue("It should contain some media", article.getMedia().size() > 0);
 
-            for(NYTMedia media : article.getMedia()){
+            for (NYTMedia media : article.getMedia()) {
                 assertNotNull(media.getCaption());
                 assertNotNull(media.getCopyright());
                 assertNotNull(media.getMedia_metadata());
-                assertTrue("It should contain meta-data", media.getMedia_metadata().size() > 0);
 
-                for(NYTMediaMetadata mediaMetadata : media.getMedia_metadata()){
+                for (NYTMediaMetadata mediaMetadata : media.getMedia_metadata()) {
                     assertNotNull(mediaMetadata.getUrl());
                     assertNotNull(mediaMetadata.getFormat());
                     assertNotNull(mediaMetadata.getHeight());

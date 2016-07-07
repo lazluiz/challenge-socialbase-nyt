@@ -25,6 +25,7 @@ import io.lazluiz.challengesocialbasenyt.BuildConfig;
  * E-mail: lf.lazzarin@gmail.com
  * GitHub: github.com/luizfelippe
  */
+
 public class NetworkQueue {
 
     private static final String CONTENT_TYPE_PARAM_KEY = "Content-Type";

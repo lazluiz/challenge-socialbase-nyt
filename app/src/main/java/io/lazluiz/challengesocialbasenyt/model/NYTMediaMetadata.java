@@ -8,7 +8,6 @@ import io.realm.RealmObject;
  * GitHub: github.com/luizfelippe
  */
 
-
 public class NYTMediaMetadata extends RealmObject {
 
     private String url;

@@ -10,7 +10,6 @@ import io.realm.annotations.PrimaryKey;
  * GitHub: github.com/luizfelippe
  */
 
-
 public class NYTArticle extends RealmObject {
 
     @PrimaryKey
@@ -22,8 +21,8 @@ public class NYTArticle extends RealmObject {
     private String url;
     private String adx_keywords;
     private String published_date;
-    private RealmList<NYTMedia> media;
     private String abstract_str;
+    private RealmList<NYTMedia> media;
 
     public long getId() {
         return id;

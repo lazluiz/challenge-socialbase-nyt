@@ -9,7 +9,6 @@ import io.realm.RealmObject;
  * GitHub: github.com/luizfelippe
  */
 
-
 public class NYTMedia extends RealmObject{
 
     private String caption;

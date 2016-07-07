@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Challenge Socialbase NYT</string>
+
+    <string name="sections_btn_arts">Arts</string>
+    <string name="sections_btn_science">Science</string>
+    <string name="sections_btn_sports">Sports</string>
+    <string name="sections_btn_tech">Technology</string>
+
 </resources>
