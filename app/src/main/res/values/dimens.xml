@@ -10,4 +10,7 @@
     <dimen name="articles_item_title_size">15sp</dimen>
     <dimen name="articles_item_subtitle_size">12sp</dimen>
     <dimen name="articles_item_text_margin">12dp</dimen>
+
+    <!-- Article Detail -->
+    <dimen name="article_detail_picture_height">128dp</dimen>
 </resources>

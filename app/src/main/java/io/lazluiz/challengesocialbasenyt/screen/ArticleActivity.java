@@ -1,6 +1,7 @@
 package io.lazluiz.challengesocialbasenyt.screen;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import io.lazluiz.challengesocialbasenyt.R;
@@ -32,7 +35,7 @@ public class ArticleActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
         RecyclerView recycler = (RecyclerView) findViewById(R.id.recycler);
         recycler.setLayoutManager(getLayoutManager());
@@ -61,8 +64,9 @@ public class ArticleActivity extends AppCompatActivity {
         articleAdapter.setOnItemClickListener(new ArticleAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(NYTArticle data) {
-//                Intent it = new Intent(ArticleActivity.this, ArticleDetailsActivity.class);
-//                startActivity(it);
+                Intent it = new Intent(ArticleActivity.this, ArticleDetailsActivity.class);
+                it.putExtra(ArticleDetailsActivity.EXTRA_ARTICLE_ID, data.getId());
+                startActivity(it);
             }
         });
         return articleAdapter;
@@ -93,5 +97,13 @@ public class ArticleActivity extends AppCompatActivity {
                 mDivider.draw(c);
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 }

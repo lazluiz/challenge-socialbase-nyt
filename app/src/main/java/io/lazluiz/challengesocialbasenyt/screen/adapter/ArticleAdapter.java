@@ -19,6 +19,7 @@ import java.util.Date;
 
 import io.lazluiz.challengesocialbasenyt.R;
 import io.lazluiz.challengesocialbasenyt.model.NYTArticle;
+import io.lazluiz.challengesocialbasenyt.model.NYTMedia;
 import io.lazluiz.challengesocialbasenyt.model.NYTMediaMetadata;
 
 /**
@@ -85,8 +86,16 @@ public class ArticleAdapter extends AbstractRecyclerAdapter<NYTArticle, ArticleA
             mImageMain.setContentDescription(data.getTitle());
 
             if (data.getMedia().size() > 0) {
-                NYTMediaMetadata image = data.getMedia().get(0).getMedia_metadata().where().equalTo("format", "mediumThreeByTwo440").findFirst();
-                Glide.with(mContext).load(image.getUrl()).into(mImageMain);
+                NYTMedia media = data.getMedia().get(0);
+                NYTMediaMetadata metadata = media.getMedia_metadata()
+                        .where()
+                        .equalTo("format", "mediumThreeByTwo440")
+                        .or()
+                        .equalTo("format", "mediumThreeByTwo210")
+                        .or()
+                        .equalTo("format", "Standard Thumbnail").findFirst();
+                if(metadata != null)
+                Glide.with(mContext).load(metadata.getUrl()).into(mImageMain);
             }
 
         }
