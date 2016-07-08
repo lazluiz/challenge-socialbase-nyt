@@ -1,15 +1,18 @@
 package io.lazluiz.challengesocialbasenyt.data;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Window;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.lazluiz.challengesocialbasenyt.R;
 import io.lazluiz.challengesocialbasenyt.model.NYTArticle;
 import io.realm.Realm;
 
@@ -48,17 +51,25 @@ public class FetchAPIData {
 
         // Let's not update every time we launch our app
         if (diff > TIME_OFFSET_IN_MS) {
+            final ProgressDialog loading = new ProgressDialog(mContext);
+            loading.setCancelable(true);
+            loading.setMessage(mContext.getString(R.string.message_fetching_data));
+            loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            loading.show();
+
             for (String section : mSections) {
                 String url = String.format(URL_DATA, section);
                 mNetworkQueue.doGet(url, LOG_TAG, new NetworkQueue.NetworkRequestCallback<JSONObject>() {
                     @Override
                     public void onRequestResponse(JSONObject response) {
                         persistData(response);
+                        loading.dismiss();
                     }
 
                     @Override
                     public void onRequestError(Exception error) {
                         Log.e(LOG_TAG, error.getMessage());
+                        loading.dismiss();
                     }
                 });
             }
@@ -107,8 +118,8 @@ public class FetchAPIData {
         return str.replace("\"" + field + "\":", "\"" + srlField + "\":");
     }
 
-    // The NYT API returns "" for empty lists instead of [], and that
-    // throws an error for JSON mapping.
+    // The NYT API returns "" for empty lists instead of [], and that would
+    // throw an error on JSON parsing.
     private String serializeEmptyArrayField(String str, String field){
         return str.replace("\"" + field + "\":\"\"", "\"" + field + "\":[]");
     }

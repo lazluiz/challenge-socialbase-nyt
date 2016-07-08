@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/articles_item_padding"
+    android:paddingBottom="@dimen/articles_item_padding">
+
+    <ImageView
+        android:id="@+id/item_article_picture"
+        android:layout_width="@dimen/articles_item_image_size"
+        android:layout_height="@dimen/articles_item_image_size"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/item_article_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/articles_item_text_margin"
+        android:layout_marginStart="@dimen/articles_item_text_margin"
+        android:layout_toEndOf="@+id/item_article_picture"
+        android:layout_toRightOf="@+id/item_article_picture"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Title"
+        android:textSize="@dimen/articles_item_title_size" />
+
+    <TextView
+        android:id="@+id/item_article_byline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_article_title"
+        android:layout_marginLeft="@dimen/articles_item_text_margin"
+        android:layout_marginStart="@dimen/articles_item_text_margin"
+        android:layout_toEndOf="@+id/item_article_picture"
+        android:layout_toRightOf="@+id/item_article_picture"
+        android:fontFamily="sans-serif-light"
+        android:text="By Line"
+        android:textSize="@dimen/articles_item_subtitle_size" />
+
+    <TextView
+        android:id="@+id/item_article_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:text="Date"
+        android:textSize="@dimen/articles_item_subtitle_size"
+        android:layout_alignBottom="@+id/item_article_picture"
+        android:layout_alignLeft="@+id/item_article_byline"
+        android:layout_alignStart="@+id/item_article_byline" />
+
+</RelativeLayout>

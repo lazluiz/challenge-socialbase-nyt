@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">Challenge Socialbase NYT</string>
 
+    <!-- MainActivity -->
     <string name="sections_btn_arts">Arts</string>
     <string name="sections_btn_science">Science</string>
     <string name="sections_btn_sports">Sports</string>
     <string name="sections_btn_tech">Technology</string>
+
+    <string name="message_fetching_data">Buscando dados da API..</string>
 
 </resources>

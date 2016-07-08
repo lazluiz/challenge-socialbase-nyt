@@ -1,27 +1,22 @@
 package io.lazluiz.challengesocialbasenyt.screen;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import io.lazluiz.challengesocialbasenyt.R;
 import io.lazluiz.challengesocialbasenyt.data.FetchAPIData;
-import io.lazluiz.challengesocialbasenyt.model.NYTArticle;
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final static String LOG_TAG = MainActivity.class.getSimpleName();
     private final static String[] SECTIONS = {
-            "arts",
-            "science",
-            "sports",
-            "technology"
+            "Arts",
+            "Science",
+            "Sports",
+            "Technology"
     };
     private final static int SECTION_ARTS = 0;
     private final static int SECTION_SCIENCE = 1;
@@ -33,23 +28,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Fetch NYT API Data to Realm database
-        FetchAPIData fetchAPIData = new FetchAPIData(this, SECTIONS);
-        fetchAPIData.fetchData();
-
-        // Check if everything's ok
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<NYTArticle> nytArticles = realm.where(NYTArticle.class).findAll();
-
-        for (NYTArticle article : nytArticles) {
-            Log.i(LOG_TAG, article.getSection() + " :: " + article.getTitle());
-        }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         Button btnSectionArts = (Button) findViewById(R.id.btnSectionArts);
         btnSectionArts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openArticlesActivity(SECTION_ARTS);
+                openArticleActivity(SECTION_ARTS);
             }
         });
 
@@ -57,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         btnSectionScience.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openArticlesActivity(SECTION_SCIENCE);
+                openArticleActivity(SECTION_SCIENCE);
             }
         });
 
@@ -65,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         btnSectionSports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openArticlesActivity(SECTION_SPORTS);
+                openArticleActivity(SECTION_SPORTS);
             }
         });
 
@@ -73,14 +59,18 @@ public class MainActivity extends AppCompatActivity {
         btnSectionTechnology.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openArticlesActivity(SECTION_TECHNOLOGY);
+                openArticleActivity(SECTION_TECHNOLOGY);
             }
         });
+
+        // Fetch NYT API Data to Realm database
+        FetchAPIData fetchAPIData = new FetchAPIData(this, SECTIONS);
+        fetchAPIData.fetchData();
     }
 
-    private void openArticlesActivity(int section){
-//        Intent it = new Intent(MainActivity.this, ArticleActivity.class);
-//        it.putExtra(ArticleActivity.EXTRA_SECTION, SECTIONS[section]);
-//        startActivity(it);
+    private void openArticleActivity(int section){
+        Intent it = new Intent(MainActivity.this, ArticleActivity.class);
+        it.putExtra(ArticleActivity.EXTRA_SECTION, SECTIONS[section]);
+        startActivity(it);
     }
 }
